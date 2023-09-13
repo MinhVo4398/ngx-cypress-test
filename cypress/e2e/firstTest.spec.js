@@ -40,7 +40,7 @@ describe("Our first suite", () => {
 
     })
 
-    it.only('second test',()=>{
+    it('second test',()=>{
         cy.visit('/pages')
         cy.contains('Forms').click()
         cy.contains('Form Layouts').click()
@@ -62,6 +62,15 @@ describe("Our first suite", () => {
         cy.contains('nb-card','Horizontal form').find('[type="email"]')
 
     });
+
+    it.only('then and wrap method', ()=>{
+        cy.visit('/pages')
+        cy.contains('Forms').click()
+        cy.contains('Form Layouts').click()
+
+        cy.contains('nb-card','Using the Grid').find('[for="inputEmail1"]').should('contain','Email')
+    })
+
 
     
 
