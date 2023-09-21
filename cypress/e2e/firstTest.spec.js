@@ -118,16 +118,38 @@ describe("Our first suite", () => {
                 expect(classValue).contain('checked')
             })
     })
+    // Handle web date picker
+    it.only('assert property', () => {
+        
+        function selectDayFromCurrent(day) {
+            let date = new Date();
+            date.setDate(date.getDate() + day)
+            let futureDay = date.getDate()
+            let futureMonth = date.toLocaleString('default', { month: 'short' })
+            let dateAssert = futureMonth + ' ' + futureDay + ', ' + date.getFullYear()
 
-    it('assert property', () => {
-        cy.visit('/pages')
+            cy.get('nb-calendar-navigation').invoke('attr', 'ng-reflect-date').then(dateAttribute => {
+                if (!dateAttribute.includes(futureMonth)) {
+                    cy.get('[data-name="chevron-right"]').click()
+                    selectDayFromCurrent(day)
+                }
+                else {
+                    cy.get('nb-calendar-day-picker [class="day-cell ng-star-inserted"]').contains(futureDay).click()
+                }
+
+            })
+            return dateAssert
+        }
+
+        cy.visit('/')
         cy.contains('Forms').click()
         cy.contains('Datepicker').click()
 
         cy.contains('nb-card', 'Common Datepicker').find('input').then(input => {
             cy.wrap(input).click()
-            cy.get('nb-calendar-day-picker').contains('13').click()
-            cy.wrap(input).invoke('prop', 'value').should('contain', 'Sep 13, 2023')
+            let dateAssert = selectDayFromCurrent(300)
+            cy.wrap(input).invoke('prop', 'value').should('contain', dateAssert)
+
         })
     })
 
@@ -158,7 +180,7 @@ describe("Our first suite", () => {
         })
     })
 
-    it.only('check checkboxes', () => {
+    it('check checkboxes', () => {
         cy.visit('/')
         cy.contains('Modal & Overlays').click()
         cy.contains('Toastr').click()
@@ -167,5 +189,6 @@ describe("Our first suite", () => {
         cy.get('[type="checkbox"]').eq(0).click({ force: true })
         cy.get('[type="checkbox"]').eq(1).check({ force: true })
     })
+
 
 })
